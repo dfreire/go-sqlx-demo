@@ -49,12 +49,12 @@ func Test(t *testing.T) {
 	rows, err := db.Queryx("SELECT code, name FROM Country")
 	assert.Nil(t, err)
 	for rows.Next() {
-		var country Country
+		country := Country{}
 		err = rows.StructScan(&country)
 		assert.Nil(t, err)
 	}
 
-	var country Country
+	country := Country{}
 	err = db.Get(&country, "SELECT * FROM Country WHERE code = ?", "PT")
 	assert.Nil(t, err)
 	assert.Equal(t, Country{Code: "PT", Name: "Portugal"}, country)
@@ -63,4 +63,15 @@ func Test(t *testing.T) {
 	err = db.Select(&cities, "SELECT * FROM City")
 	assert.Nil(t, err)
 	assert.Equal(t, 4, len(cities))
+
+	tx = db.MustBegin()
+	tx.MustExec("UPDATE City SET name = ? WHERE code = ?", "Lisboa", "LIS")
+	err = tx.Commit()
+	assert.Nil(t, err)
+
+	lisbon := City{}
+	err = db.Get(&lisbon, "SELECT name FROM City WHERE code = ?", "LIS")
+	assert.Nil(t, err)
+	assert.Equal(t, "Lisboa", lisbon.Name)
+	assert.Equal(t, "", lisbon.Code) // because code column is not part of the select statement
 }
