@@ -74,4 +74,14 @@ func Test(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "Lisboa", lisbon.Name)
 	assert.Equal(t, "", lisbon.Code) // because code column is not part of the select statement
+
+	tx = db.MustBegin()
+	tx.MustExec("DELETE FROM City WHERE country_code = ?", "SP")
+	err = tx.Commit()
+	assert.Nil(t, err)
+
+	cities = []City{}
+	err = db.Select(&cities, "SELECT * FROM City WHERE country_code = ?", "SP")
+	assert.Nil(t, err)
+	assert.Equal(t, 0, len(cities))
 }
