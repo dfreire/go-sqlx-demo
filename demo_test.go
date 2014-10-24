@@ -87,4 +87,9 @@ func Test(t *testing.T) {
 	err = db.Select(&cities, "SELECT * FROM City WHERE country_code = ?", "SP")
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(cities))
+
+	paris := City{}
+	err = db.Get(&paris, "SELECT * FROM City WHERE code = ?", "PAR")
+	assert.NotNil(t, err)
+	assert.Equal(t, "", paris.Name)
 }
