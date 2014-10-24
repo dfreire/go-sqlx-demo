@@ -1,9 +1,12 @@
 package demo_test
 
-import "testing"
-import "github.com/stretchr/testify/assert"
-import "github.com/jmoiron/sqlx"
-import _ "github.com/mattn/go-sqlite3"
+import (
+	"testing"
+
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/stretchr/testify/assert"
+)
 
 type Country struct {
 	Code string
