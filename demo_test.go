@@ -13,10 +13,10 @@ type Country struct {
 type City struct {
 	Code        string
 	Name        string
-	CountryCode string
+	CountryCode string `db:"country_code"`
 }
 
-func TestSomething(t *testing.T) {
+func Test(t *testing.T) {
 	db, err := sqlx.Open("sqlite3", ":memory:")
 	assert.Nil(t, err)
 	assert.NotNil(t, db)
@@ -46,7 +46,7 @@ func TestSomething(t *testing.T) {
 	err = tx.Commit()
 	assert.Nil(t, err)
 
-	rows, err := db.Queryx("SELECT code, name FROM Country ")
+	rows, err := db.Queryx("SELECT code, name FROM Country")
 	assert.Nil(t, err)
 	for rows.Next() {
 		var country Country
@@ -55,7 +55,12 @@ func TestSomething(t *testing.T) {
 	}
 
 	var country Country
-	err = db.QueryRowx("SELECT code, name FROM Country WHERE code = ?", "PT").StructScan(&country)
+	err = db.Get(&country, "SELECT * FROM Country WHERE code = ?", "PT")
 	assert.Nil(t, err)
 	assert.Equal(t, Country{Code: "PT", Name: "Portugal"}, country)
+
+	cities := []City{}
+	err = db.Select(&cities, "SELECT * FROM City")
+	assert.Nil(t, err)
+	assert.Equal(t, 4, len(cities))
 }
