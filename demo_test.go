@@ -1,6 +1,8 @@
 package demo_test
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/jmoiron/sqlx"
@@ -89,10 +91,8 @@ func Test(t *testing.T) {
 	assert.Equal(t, 0, len(cities))
 
 	cities = []City{}
-	var cityCodes []interface{}
-	cityCodes = append(cityCodes, "OPO")
-	cityCodes = append(cityCodes, "LIS")
-	err = db.Select(&cities, "SELECT * FROM City WHERE code in (?, ?)", cityCodes...)
+	questionMarks, cityCodes := createArrays([]string{"OPO", "LIS"})
+	err = db.Select(&cities, fmt.Sprintf("SELECT * FROM City WHERE code in (%s)", questionMarks), cityCodes...)
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(cities))
 
@@ -100,5 +100,14 @@ func Test(t *testing.T) {
 	err = db.Get(&paris, "SELECT * FROM City WHERE code = ?", "PAR")
 	assert.NotNil(t, err)
 	assert.Equal(t, "", paris.Name)
+}
 
+func createArrays(values []string) (string, []interface{}) {
+	var questionMarks []string
+	var valueMarks []interface{}
+	for _, value := range values {
+		questionMarks = append(questionMarks, "?")
+		valueMarks = append(valueMarks, value)
+	}
+	return strings.Join(questionMarks, ","), valueMarks
 }
