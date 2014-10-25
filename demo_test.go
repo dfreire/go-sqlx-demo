@@ -91,7 +91,7 @@ func Test(t *testing.T) {
 	assert.Equal(t, 0, len(cities))
 
 	cities = []City{}
-	questionMarks, cityCodes := createArrays("OPO", "LIS")
+	questionMarks, cityCodes := getValuesAndQuestionMarks("OPO", "LIS")
 	err = db.Select(&cities, fmt.Sprintf("SELECT * FROM City WHERE code in (%s)", questionMarks), cityCodes...)
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(cities))
@@ -102,7 +102,7 @@ func Test(t *testing.T) {
 	assert.Equal(t, "", paris.Name)
 }
 
-func createArrays(values ...interface{}) (string, []interface{}) {
+func getValuesAndQuestionMarks(values ...interface{}) (string, []interface{}) {
 	var questionMarks []string
 	var valueMarks []interface{}
 	for _, value := range values {
