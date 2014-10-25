@@ -92,7 +92,7 @@ func Test(t *testing.T) {
 
 	cities = []City{}
 	questionMarks, cityCodes := getValuesAndQuestionMarks("OPO", "LIS")
-	err = db.Select(&cities, fmt.Sprintf("SELECT * FROM City WHERE code in (%s)", questionMarks), cityCodes...)
+	err = db.Select(&cities, fmt.Sprint("SELECT * FROM City WHERE code in (", questionMarks, ")"), cityCodes...)
 	assert.Nil(t, err)
 	assert.Equal(t, 2, len(cities))
 
