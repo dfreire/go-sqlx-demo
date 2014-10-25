@@ -104,10 +104,8 @@ func Test(t *testing.T) {
 
 func getValuesAndQuestionMarks(values ...interface{}) (string, []interface{}) {
 	var questionMarks []string
-	var valueMarks []interface{}
-	for _, value := range values {
+	for _, _ = range values {
 		questionMarks = append(questionMarks, "?")
-		valueMarks = append(valueMarks, value)
 	}
-	return strings.Join(questionMarks, ","), valueMarks
+	return strings.Join(questionMarks, ","), values
 }
