@@ -88,8 +88,17 @@ func Test(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 0, len(cities))
 
+	cities = []City{}
+	var cityCodes []interface{}
+	cityCodes = append(cityCodes, "OPO")
+	cityCodes = append(cityCodes, "LIS")
+	err = db.Select(&cities, "SELECT * FROM City WHERE code in (?, ?)", cityCodes...)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(cities))
+
 	paris := City{}
 	err = db.Get(&paris, "SELECT * FROM City WHERE code = ?", "PAR")
 	assert.NotNil(t, err)
 	assert.Equal(t, "", paris.Name)
+
 }
