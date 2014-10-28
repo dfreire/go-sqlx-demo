@@ -100,6 +100,19 @@ func Test(t *testing.T) {
 	err = db.Get(&paris, "SELECT * FROM City WHERE code = ?", "PAR")
 	assert.NotNil(t, err)
 	assert.Equal(t, "", paris.Name)
+
+	tx = db.MustBegin()
+	france := make(map[string]interface{})
+	france["code"] = "FR"
+	france["name"] = "France"
+	tx.NamedExec("INSERT INTO Country (code, name) VALUES (:code, :name)", france)
+	err = tx.Commit()
+	assert.Nil(t, err)
+
+	country = Country{}
+	err = db.Get(&country, "SELECT * FROM Country WHERE code = ?", "FR")
+	assert.Nil(t, err)
+	assert.Equal(t, "France", country.Name)
 }
 
 func ValuesWithQuestionMarks(values ...interface{}) (string, []interface{}) {
